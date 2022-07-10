@@ -1,6 +1,7 @@
 package com.bank.trainig.api.bankapi.datasource
 
 import com.bank.trainig.api.bankapi.dtos.*
+import com.bank.trainig.api.bankapi.exceptions.UserNotFoundException
 import com.bank.trainig.api.bankapi.model.AccountType
 import com.bank.trainig.api.bankapi.model.User
 import org.springframework.stereotype.Repository
@@ -12,7 +13,9 @@ import java.util.*
 class DataSourceMock : DataSource {
 
     val users = mutableListOf(
-        generateUser(AccountType.ADMIN, "mateuszszumny19@gmail.com", "123qwe", "Mateusz Szumny", 1000000)
+        generateUser(AccountType.INTERNALUSER, "matt1", "123qwe", "Mateusz Szumny1", 1000000),
+        generateUser(AccountType.EXTERNALUSER, "matt2", "123qwe", "Mateusz Szumny2", 1000000),
+        generateUser(AccountType.EXTERNALUSER, "matt3", "123qwe", "Mateusz Szumny3", 1000000)
     )
 
 
@@ -38,7 +41,8 @@ class DataSourceMock : DataSource {
     }
 
     override fun login(login: LoginDto): UserDto {
-        var user = users.first { it.login == login.login && it.password == login.password }
+        var user = users.find { it.login == login.login && it.password == login.password }
+            ?: throw UserNotFoundException("user: ${login.login} not found, please Register")
 
         return UserDto(user.id, user.userName, user.accountType)
     }
@@ -75,12 +79,13 @@ class DataSourceMock : DataSource {
         return UserDto(user.id, user.userName, user.accountType)
     }
 
-    override fun getUsers(): Collection<UserDto> = users.map { UserDto(it.id, it.userName, it.accountType) }.toList()
+    override fun getUsers(): Collection<UserDetailsDto> =
+        users.map { UserDetailsDto(it.id, it.userName, it.accountType, it.fee, it.accountNumber) }.toList()
 
     override fun getUserDetailsById(userId: String): UserDetailsDto {
         var user = users.find { it.id == userId } ?: throw IllegalArgumentException("User does not exist")
 
-        return UserDetailsDto(user.id, user.userName, user.accountType, user.fee)
+        return UserDetailsDto(user.id, user.userName, user.accountType, user.fee, user.accountNumber)
     }
 
     private fun generateUser(

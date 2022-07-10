@@ -13,6 +13,6 @@ class UserService(private val dataSource: DataSourceMock) {
         dataSource.updateUserFee(user, userIdThatWillChangeFee)
 
     fun getUserById(userId: String): UserDto = dataSource.getUserById(userId)
-    fun getUsers(): Collection<UserDto> = dataSource.getUsers()
+    fun getUsers(): Collection<UserDetailsDto> = dataSource.getUsers()
     fun getUserDetailsById(userId: String): UserDetailsDto = dataSource.getUserDetailsById(userId)
 }

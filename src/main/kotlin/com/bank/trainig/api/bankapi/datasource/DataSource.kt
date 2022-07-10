@@ -9,6 +9,6 @@ interface DataSource {
     fun login(login: LoginDto): UserDto
     fun updateUserFee(user:UpdateFeeDto , userIdThatWillChangeFee: String)
     fun getUserById(userId: String): UserDto
-    fun getUsers(): Collection<UserDto>
+    fun getUsers(): Collection<UserDetailsDto>
     fun getUserDetailsById(userId: String): UserDetailsDto
 }
